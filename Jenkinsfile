@@ -1,3 +1,4 @@
+def imageName = 'paulappz/quote-web'
 
 node('workers'){
     stage('Checkout'){
@@ -22,7 +23,7 @@ node('workers'){
             //        reportDir: "$PWD/coverage",
             //        reportFiles: "index.html",
             //        reportName: "Coverage Report"
-                ])
+            //    ])
             }
         )
     }
