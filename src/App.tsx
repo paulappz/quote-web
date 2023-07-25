@@ -10,7 +10,7 @@ function App() {
 
   const getApiData = async () => {
     const response = await fetch(
-      "http://localhost:3000/api/randomquote"
+      "http://localhost:7000/api/randomquote"
     ).then(response => response.json())
     const q = response.quote;
     setQuote({ quote: q.quote, by: q.by });
