@@ -1,6 +1,8 @@
 # stage1 as builder
 FROM node:16.14 as builder
 
+LABEL MAINTAINER paulappz
+
 # copy the package.json to install dependencies
 COPY package.json package-lock.json ./
 
