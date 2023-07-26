@@ -3,8 +3,10 @@ def registry = '570942461061.dkr.ecr.eu-west-2.amazonaws.com'
 def region = 'eu-west-2'
 
 node('workers'){
+try {
     stage('Checkout'){
         checkout scm
+        notifySlack('STARTED')
     }
     
     //  def imageTest= docker.build("${imageName}-test", "-f Dockerfile.test .")
@@ -84,4 +86,61 @@ node('workers'){
             }
             anchore name: 'images'
         }
+    stage('Deploy'){
+        if(env.BRANCH_NAME == 'develop' || env.BRANCH_NAME == 'preprod'){
+                build job: "quote-microservice-deployments/${env.BRANCH_NAME}"
+        }
+        if(env.BRANCH_NAME == 'master'){
+                timeout(time: 2, unit: "HOURS") {
+                input message: "Approve Deploy?", ok: "Yes"
+        }
+                build job: "quote-microservice-deployments/master"
+            }
+        }
+}
+        catch(e){
+        currentBuild.result = 'FAILED'
+        throw e
+    } finally {
+        notifySlack(currentBuild.result)
+    }
+}
+
+def notifySlack(String buildStatus){
+    buildStatus =  buildStatus ?: 'SUCCESSFUL'
+    def colorCode = '#FF0000'
+    def subject = "Name: '${env.JOB_NAME}'\nStatus: ${buildStatus}\nBuild ID: ${env.BUILD_NUMBER}"
+    def summary = "${subject}\nMessage: ${commitMessage()}\nAuthor: ${commitAuthor()}\nURL: ${env.BUILD_URL}"
+
+    if (buildStatus == 'STARTED') {
+        colorCode = '#546e7a'
+    } else if (buildStatus == 'SUCCESSFUL') {
+        colorCode = '#2e7d32'
+    } else {
+        colorCode = '#c62828c'
+    }
+
+    slackSend (color: colorCode, message: summary)
+}
+
+
+def commitAuthor(){
+    sh 'git show -s --pretty=%an > .git/commitAuthor'
+    def commitAuthor = readFile('.git/commitAuthor').trim()
+    sh 'rm .git/commitAuthor'
+    commitAuthor
+}
+
+def commitID() {
+    sh 'git rev-parse HEAD > .git/commitID'
+    def commitID = readFile('.git/commitID').trim()
+    sh 'rm .git/commitID'
+    commitID
+}
+
+def commitMessage() {
+    sh 'git log --format=%B -n 1 HEAD > .git/commitMessage'
+    def commitMessage = readFile('.git/commitMessage').trim()
+    sh 'rm .git/commitMessage'
+    commitMessage
 }
