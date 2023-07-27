@@ -71,22 +71,9 @@ try {
             }
     }
     stage('Analyze'){
-    
-        if (env.BRANCH_NAME == 'develop') {
-                def scannedImage = "${registry}/${imageName}:develop"
+                def scannedImage = "${registry}/${imageName}:env.BRANCH_NAME"
                 writeFile file: 'images', text: scannedImage
                 anchore name: 'images'
-            }
-         if (env.BRANCH_NAME == 'preprod') {
-                def scannedImage = "${registry}/${imageName}:preprod"
-                writeFile file: 'images', text: scannedImage
-                anchore name: 'images'
-            }
-         if (env.BRANCH_NAME == 'master') {
-                sh "docker push ${registry}/${imageName}:master"
-                writeFile file: 'images', text: scannedImage
-                anchore name: 'images'
-            }
             
         }
     stage('Deploy'){
