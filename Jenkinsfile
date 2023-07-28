@@ -70,12 +70,22 @@ try {
                 sh "docker push ${registry}/${imageName}:master"
             }
     }
+
     stage('Analyze'){
-                def scannedImage = "${registry}/${imageName}:env.BRANCH_NAME"
-                writeFile file: 'images', text: scannedImage
-                anchore name: 'images'
-            
+     def scannedImage = ''
+        if (env.BRANCH_NAME == 'develop') {
+                scannedImage = "${registry}/${imageName}:develop"
+            }
+         if (env.BRANCH_NAME == 'preprod') {
+                scannedImage = "${registry}/${imageName}:preprod"
+            }
+         if (env.BRANCH_NAME == 'master') {
+                scannedImage = "${registry}/${imageName}:master"
+            }
+             writeFile file: 'images', text: scannedImage
+             anchore name: 'images'
         }
+        
     stage('Deploy'){
         if(env.BRANCH_NAME == 'develop' || env.BRANCH_NAME == 'preprod'){
                 build job: "quote-microservice-deployments/${env.BRANCH_NAME}"
