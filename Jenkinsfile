@@ -46,28 +46,29 @@ try {
        sh "aws ecr get-login-password --region ${region} | docker login --username AWS --password-stdin ${registry}/${imageName}"
         if (env.BRANCH_NAME == 'develop') {
                 sh "docker build --build-arg ENVIRONMENT=sandbox --tag ${imageName}:develop ."
-                sh " docker tag ${imageName}:develop ${registry}/${imageName}:develop"
             }
         if (env.BRANCH_NAME == 'preprod') {
                 sh "docker build --build-arg ENVIRONMENT=staging --tag ${imageName}:preprod ."
-                sh " docker tag ${imageName}:preprod ${registry}/${imageName}:preprod"
             }
-
         if (env.BRANCH_NAME == 'master') {
                 sh "docker build --build-arg ENVIRONMENT=production --tag ${imageName}:master ."
-                sh " docker tag ${imageName}:master ${registry}/${imageName}:master"                       
             }  
-    } 
+    }
     
+        
     stage('Push'){
          if (env.BRANCH_NAME == 'develop') {
+                sh " docker tag ${imageName}:develop ${registry}/${imageName}:develop"
                 sh "docker push ${registry}/${imageName}:develop"
             }
          if (env.BRANCH_NAME == 'preprod') {
+                sh " docker tag ${imageName}:preprod ${registry}/${imageName}:preprod"
                 sh "docker push ${registry}/${imageName}:preprod"
             }
          if (env.BRANCH_NAME == 'master') {
+                sh " docker tag ${imageName}:master ${registry}/${imageName}:master" 
                 sh "docker push ${registry}/${imageName}:master"
+                
             }
     }
 
