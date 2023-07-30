@@ -67,7 +67,7 @@ try {
             scannedImage = "${registry}/${imageName}:${env.BRANCH_NAME}"
         }
         if (env.BRANCH_NAME == 'master') {
-            scannedImage = "${registry}/${imageName}:${env.BRANCH_NAME}"
+            scannedImage = "${registry}/${imageName}:latest"
         }
        
         writeFile file: 'images', text: scannedImage
