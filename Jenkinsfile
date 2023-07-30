@@ -10,6 +10,7 @@ try {
     }
     
     //  def imageTest= docker.build("${imageName}-test", "-f Dockerfile.test .")
+    def customImage = ''
 
    stage('Quality Tests'){
    //     sh "docker run --rm ${imageName}-test npm run lint"
@@ -43,7 +44,8 @@ try {
     }
     
     stage('Build'){
-            docker.build(imageName)
+            //docker.build(imageName)
+         customImage =  docker.build("${imageName}:${env.BRANCH_NAME}")
     }
     
     stage('Push'){
@@ -51,8 +53,7 @@ try {
             docker.withRegistry("https://${registry}") {
                         if (env.BRANCH_NAME == 'develop' || env.BRANCH_NAME == 'preprod' ) {
                             //docker.image(imageName).push("${env.BRANCH_NAME}")
-                            def customImage = docker.build("${imageName}:${env.BRANCH_NAME}")
-
+                
                             // push image
                             customImage.push()
                         }
