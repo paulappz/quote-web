@@ -48,7 +48,6 @@ try {
             docker.build(imageName)
     }
     
-        
     stage('Push'){
          //   sh "aws ecr get-login-password --region ${region} | docker login --username AWS --password-stdin ${registry}/${imageName}"
             docker.withRegistry("https://${registry}") {
