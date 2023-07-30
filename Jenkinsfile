@@ -43,7 +43,7 @@ try {
     }
     
     stage('Build'){
-            docker.build("${imageName}:env.BRANCH_NAME}")
+            docker.build("${imageName}")
     }
     
     stage('Push'){
