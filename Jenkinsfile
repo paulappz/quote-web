@@ -43,14 +43,14 @@ try {
     }
     
     stage('Build'){
-            docker.build("${imageName}")
+            docker.build(imageName)
     }
     
     stage('Push'){
             sh "aws ecr get-login-password --region ${region} | docker login --username AWS --password-stdin ${registry}/${imageName}"
             docker.withRegistry("https://${registry}") {
                         if (env.BRANCH_NAME == 'develop' || env.BRANCH_NAME == 'preprod' ) {
-                            docker.image("${imageName}:env.BRANCH_NAME}").push("${env.BRANCH_NAME}")
+                            docker.image(imageName).push("${env.BRANCH_NAME}")
                         }
                         if (env.BRANCH_NAME == 'master') {
                             docker.image(imageName).push('latest')
