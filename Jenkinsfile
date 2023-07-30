@@ -42,7 +42,6 @@ try {
         }
     }
     
-    
     stage('Build'){
             docker.build(imageName)
     }
