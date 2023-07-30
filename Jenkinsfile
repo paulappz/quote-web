@@ -10,9 +10,8 @@ try {
     }
     
     //  def imageTest= docker.build("${imageName}-test", "-f Dockerfile.test .")
-    sh "aws ecr get-login-password --region ${region} | docker login --username AWS --password-stdin ${registry}/${imageName} \
-                docker system prune -a
-            "
+    sh "aws ecr get-login-password --region ${region} | docker login --username AWS --password-stdin ${registry}/${imageName}"
+    sh "  docker system prune -a "
 
    stage('Quality Tests'){
    //     sh "docker run --rm ${imageName}-test npm run lint"
