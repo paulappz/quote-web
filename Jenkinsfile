@@ -10,7 +10,8 @@ try {
     }
     
     //  def imageTest= docker.build("${imageName}-test", "-f Dockerfile.test .")
-    def customImage = ''
+    sh "aws ecr get-login-password --region ${region} | docker login --username AWS --password-stdin ${registry}/${imageName}"
+    sh "  docker system prune -a "
 
    stage('Quality Tests'){
    //     sh "docker run --rm ${imageName}-test npm run lint"
@@ -43,19 +44,16 @@ try {
         }
     }
     
-    stage('Build'){
-            //docker.build(imageName)
-         customImage =  docker.build("${imageName}:${env.BRANCH_NAME}")
+   stage('Build'){
+            docker.build(imageName)
     }
     
+        
     stage('Push'){
-            sh "aws ecr get-login-password --region ${region} | docker login --username AWS --password-stdin ${registry}/${imageName}"
+         //   sh "aws ecr get-login-password --region ${region} | docker login --username AWS --password-stdin ${registry}/${imageName}"
             docker.withRegistry("https://${registry}") {
                         if (env.BRANCH_NAME == 'develop' || env.BRANCH_NAME == 'preprod' ) {
-                            //docker.image(imageName).push("${env.BRANCH_NAME}")
-                
-                            // push image
-                            customImage.push()
+                            docker.image(imageName).push("${env.BRANCH_NAME}")
                         }
                         if (env.BRANCH_NAME == 'master') {
                             docker.image(imageName).push('latest')
