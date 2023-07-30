@@ -48,8 +48,9 @@ try {
             docker.build(imageName)
     }
     
+        
     stage('Push'){
-         //   sh "aws ecr get-login-password --region ${region} | docker login --username AWS --password-stdin ${registry}/${imageName}"
+            sh "aws ecr get-login-password --region ${region} | docker login --username AWS --password-stdin ${registry}/${imageName}"
             docker.withRegistry("https://${registry}") {
                         if (env.BRANCH_NAME == 'develop' || env.BRANCH_NAME == 'preprod' ) {
                             docker.image(imageName).push("${env.BRANCH_NAME}")
