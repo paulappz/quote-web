@@ -67,7 +67,7 @@ try {
             scannedImage = "${registry}/${imageName}:${env.BRANCH_NAME}"
         }
         if (env.BRANCH_NAME == 'master') {
-            docker.image(imageName).push('latest')
+            scannedImage = "${registry}/${imageName}:latest"
         }
        
         writeFile file: 'images', text: scannedImage

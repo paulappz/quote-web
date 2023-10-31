@@ -10,7 +10,7 @@ function App() {
 
   const getApiData = async () => {
     const response = await fetch(
-      "http://a9cba872f2ce94a718d4b3fb110f1918-701423064.eu-west-2.elb.amazonaws.com/api/randomquote"
+      "https://quote.maontechnology.com/api/randomquote"
     ).then(response => response.json())
     const q = response.quote;
     setQuote({ quote: q.quote, by: q.by });
