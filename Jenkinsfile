@@ -76,13 +76,13 @@ try {
     
     stage('Deploy'){
         if(env.BRANCH_NAME == 'develop' || env.BRANCH_NAME == 'preprod'){
-                build job: "quote-microservice-deployments/${env.BRANCH_NAME}"
+                build job: "quote-deployments/${env.BRANCH_NAME}"
         }
         if(env.BRANCH_NAME == 'master'){
                 timeout(time: 2, unit: "HOURS") {
                 input message: "Approve Deploy?", ok: "Yes"
         }
-                build job: "quote-microservice-deployments/master"
+                build job: "quote-deployments/master"
             }
         }
 }
